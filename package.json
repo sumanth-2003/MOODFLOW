@@ -12,7 +12,9 @@
     "moodflow": "file:",
     "next": "14.2.13",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-speech-recognition": "^3.10.0",
+    "regenerator-runtime": "^0.14.1"
   },
   "devDependencies": {
     "eslint": "^8",
