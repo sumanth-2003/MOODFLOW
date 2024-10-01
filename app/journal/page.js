@@ -31,7 +31,6 @@ export default function Journaling() {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center py-8 relative bg-gradient-to-b from-pink-50 via-blue-50 to-teal-50">
-            {/* Background Image with Opacity */}
             <div className="absolute inset-0">
                 <div className="bg-cover bg-center w-full h-full opacity-50" style={{ backgroundImage: "url(https://img.freepik.com/premium-photo/human-avatar-human-inner-world-generative-ai-generative-ai_170984-7115.jpg)" }}></div>
             </div>

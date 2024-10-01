@@ -21,6 +21,7 @@ export async function POST(req) {
 
         return NextResponse.json({ message: 'Health record created successfully', healthRecord: newHealthRecord }, { status: 201 });
     } catch (error) {
+        console.log(error)
         return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
     }
 }

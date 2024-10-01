@@ -1,16 +1,19 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { FaBed, FaUtensils, FaWater, FaHeartbeat } from 'react-icons/fa';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { getSession, useSession } from 'next-auth/react';
+import { Line } from 'react-chartjs-2';
+import { useSession } from 'next-auth/react';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 export default function HealthPage() {
     const [formData, setFormData] = useState({
-        wakeUpTime: '06:00',
+        wakeTime: '06:00',
         sleepTime: '10:00',
         foodIntake: '',
         waterIntake: '',
-        additionalData: ''
+        additionalHealthData: ''
     });
     const { data: session, status } = useSession();
 
@@ -51,22 +54,43 @@ export default function HealthPage() {
         const fetchHealthData = async () => {
             const response = await fetch('/api/health');
             const data = await response.json();
-            setHealthData(data);
+            console.log(data);
+            setHealthData(data.healthRecords);
         };
 
         fetchHealthData();
     }, []);
 
     const formatTime = (time) => {
+        if (!time) return null; // Handle undefined time
         const [hours, minutes] = time.split(':');
         return new Date(1970, 0, 1, hours, minutes);
     };
 
     const sleepData = healthData.map((entry) => ({
-        date: new Date(entry.date),
-        wakeUpTime: formatTime(entry.wakeUpTime),
-        sleepTime: formatTime(entry.sleepTime),
-    }));
+        date: new Date(entry.createdAt).toLocaleDateString(),
+        wakeTime: formatTime(entry.wakeTime)?.getHours() + formatTime(entry.wakeTime)?.getMinutes() / 60, // Convert to hours
+        sleepTime: formatTime(entry.sleepTime)?.getHours() + formatTime(entry.sleepTime)?.getMinutes() / 60, // Convert to hours
+    })).filter(entry => entry.wakeTime !== null && entry.sleepTime !== null); // Filter out invalid entries
+
+    // Chart data setup
+    const data = {
+        labels: sleepData.map(entry => entry.date),
+        datasets: [
+            {
+                label: 'Wake Up Time',
+                data: sleepData.map(entry => entry.wakeTime),
+                borderColor: '#8884d8',
+                fill: false,
+            },
+            {
+                label: 'Sleep Time',
+                data: sleepData.map(entry => entry.sleepTime),
+                borderColor: '#82ca9d',
+                fill: false,
+            },
+        ],
+    };
 
     return (
         <div className="container mx-auto p-4" style={{ minHeight: '95vh' }}>
@@ -79,8 +103,8 @@ export default function HealthPage() {
                     </div>
                     <input
                         type="time"
-                        name="wakeUpTime"
-                        value={formData.wakeUpTime}
+                        name="wakeTime"
+                        value={formData.wakeTime}
                         onChange={handleChange}
                         className="input-field p-2 border rounded w-full"
                     />
@@ -130,8 +154,8 @@ export default function HealthPage() {
                         <label className="font-semibold">Additional Health Data</label>
                     </div>
                     <textarea
-                        name="additionalData"
-                        value={formData.additionalData}
+                        name="additionalHealthData"
+                        value={formData.additionalHealthData}
                         onChange={handleChange}
                         className="input-field p-2 border rounded w-full"
                     ></textarea>
@@ -140,20 +164,14 @@ export default function HealthPage() {
                     <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700">Submit</button>
                 </div>
             </form>
-            {sleepData && <div className="mt-8">
-                <h2 className="text-2xl font-bold text-center mb-4">Sleep Data for the Past 7 Days</h2>
-                <div className="flex justify-center">
-                    <LineChart width={600} height={300} data={sleepData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" tickFormatter={(tick) => new Date(tick).toLocaleDateString()} />
-                        <YAxis />
-                        <Tooltip labelFormatter={(label) => new Date(label).toLocaleDateString()} />
-                        <Legend />
-                        <Line type="monotone" dataKey="wakeUpTime" stroke="#8884d8" name="Wake Up Time" />
-                        <Line type="monotone" dataKey="sleepTime" stroke="#82ca9d" name="Sleep Time" />
-                    </LineChart>
+            {sleepData.length > 0 && (
+                <div className="mt-8">
+                    <h2 className="text-2xl font-bold text-center mb-4">Sleep Data for the Past 7 Days</h2>
+                    <div className="flex justify-center">
+                        <Line data={data} />
+                    </div>
                 </div>
-            </div>}
+            )}
         </div>
     );
 }

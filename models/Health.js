@@ -2,20 +2,18 @@ import { Schema, model, models } from 'mongoose';
 
 const healthSchema = new Schema({
     sleepTime: {
-        type: Date,
+        type: String,
         required: true
     },
     wakeTime: {
-        type: Date,
+        type: String,
         required: true
     },
     foodIntake: {
         type: String,
-        required: true
     },
     waterIntake: {
         type: Number,
-        required: true
     },
     additionalHealthData: {
         type: String,
