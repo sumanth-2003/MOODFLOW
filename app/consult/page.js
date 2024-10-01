@@ -8,42 +8,66 @@ export default function MentalHealthAssistant() {
     const [userResponse, setUserResponse] = useState('');
     const [sending, setSending] = useState(false);
     const chatContainerRef = useRef(null);
+    const [healthData, setHealthData] = useState([]);
 
     useEffect(() => {
-        fetch('/api/health')
-            .then(response => response.json())
-            .then(data => {
-                const prompt = `
-                    Imagine you are an analyzer named "Aashaa" for a user. you need to assess him like a professional therapist 
-                    who gives his input in the form of thoughts, dreams, and any other worries he has he will enter. 
-                    You also have access to his sleep cycle which will include his sleep time and his wake-up time, 
-                    and the food he takes you need to analyze the past 7 data nutritional data from the food he takes and 
-                    how it affects his mood, hydration, and any other health information he entered.
+        const fetchData = async () => {
+            try {
+                const healthResponse = await fetch('/api/health');
+                const healthResult = await healthResponse.json();
+                console.log("Health Data:", healthResult);
+                setHealthData(healthResult.healthRecords || []);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
 
-                    Health Data: ${JSON.stringify(data)}
-
-                    You need to analyze all this and give him deep insights into his mental and physical health. 
-                    You also analyze his surface-level emotions and deep subconscious-level emotions which are stored, 
-                    and his thoughts, and dreams, taking this whole holistic approach data you need to give him deep 
-                    insights by how his thoughts and you need to analyze and give the user how all this is effecting his mood, 
-                    cognitive function, and emotional regulation.
-                    
-                    Help him navigate through this. Make him feel comfortable and chat with him one by one.
-                    Ask him what he need, help him solve his problem. Give him some suggestions or solutions in between. Don't keep on asking questions as he might be irritated.
-                    Ignore if he use hurtful language, as he might be to much stressed and not in good mood, as that's the reason why he want to talk to you.
-                    Start with your first question as a councellor, which would be directly displayed to the user.
-                `;
-                setConversation([{ role: 'user', parts: [{ text: prompt }] }]);
-                askQuestion({ conversation: [{ role: 'user', parts: [{ text: prompt }] }] });
-            })
-            .catch(error => console.error('Error:', error));
+        fetchData();
     }, []);
 
     useEffect(() => {
-        console.log(conversation)
-    }, [conversation])
+        if (healthData.length) {
+            const prompt = `
+                You are analyzing a user's health data, which includes their sleep duration, hydration intake, and food intake over the past 7 days.
+                Here is the data:
 
-    const askQuestion = (conv) => {
+                Health Data: ${JSON.stringify(healthData)}
+
+                Your task is to provide a detailed analysis of the user's health data. You need to analyze their sleep patterns, hydration intake, 
+                and food consumption in detail.
+                
+                For sleep analysis, provide insights into the user's sleep duration and patterns, explaining the advantages of maintaining good sleep 
+                and the potential disadvantages of not doing so.
+                
+                For hydration analysis, explain whether the user is consuming an adequate amount of water daily. Provide benefits of proper hydration 
+                and the risks of dehydration. Offer suggestions on how they can improve their water intake if necessary.
+                
+                For food intake, analyze what the user is consuming. Discuss the nutritional value of their food intake, highlighting what is beneficial 
+                for them and pointing out areas where they can improve their diet. Offer suggestions on how to include more nutritious foods and cut down 
+                on less healthy options.
+                
+                Make sure to explain each part in detail, highlighting the advantages and disadvantages of the user's current habits, and suggest realistic, 
+                actionable improvements that the user can make to their lifestyle to improve their health.
+
+                Address them in 1st person. Keep the response very consise and short, with out headings and bullets, and irrelevant info.
+                Put the result in 5-6 sentences only.
+            `;
+            setConversation(prev => {
+                if (prev.find(convo => convo.parts[0].text === prompt)) {
+                    return prev;
+                }
+                return [...prev, { role: 'user', parts: [{ text: prompt }] }];
+            });
+        }
+    }, [healthData]);
+
+    useEffect(() => {
+        if (conversation.length > 0 && conversation[conversation.length - 1].role === 'user') {
+            askQuestion();
+        }
+    }, [conversation]);
+
+    const askQuestion = () => {
         setSending(true);
         chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         fetch('/api/agent', {
@@ -51,7 +75,7 @@ export default function MentalHealthAssistant() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(conv || { conversation })
+            body: JSON.stringify({ conversation })
         })
             .then(response => response.json())
             .then(data => {
@@ -70,7 +94,6 @@ export default function MentalHealthAssistant() {
             setUserResponse('');
             setConversation(prevConversation => [...prevConversation, { role: 'user', parts: [{ text: userResponse }] }]);
         }
-        askQuestion();
     };
 
     const handleKeyPress = (event) => {
@@ -81,8 +104,8 @@ export default function MentalHealthAssistant() {
     };
 
     return (
-        <div className="flex flex-col p-4 items-center">
-            <div className="flex flex-col overflow-y-auto mb-4 w-full max-w-lg h-[81vh]" ref={chatContainerRef}>
+        <div className="flex flex-col items-center pb-4">
+            <div className="flex flex-col bg-white rounded-lg p-4 overflow-y-auto mb-4 w-full max-w-lg h-[83vh]" ref={chatContainerRef}>
                 {msgs.map((message, index) => (
                     <div
                         key={index}
@@ -96,7 +119,7 @@ export default function MentalHealthAssistant() {
                         {message.text}
                     </div>
                 ))}
-                {sending && <div className="p-2 bg-gray-300 text-black rounded-lg">Consultant is thinking...</div>}
+                {sending && <div className="p-2 bg-gray-300 text-black rounded-lg">Consultant is typing...</div>}
             </div>
             <div className="flex w-full max-w-lg">
                 <input
