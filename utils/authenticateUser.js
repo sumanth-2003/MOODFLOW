@@ -1,7 +1,4 @@
 import User from '@/models/User';
-import Article from "@/models/Article";
-import Comment from '@/models/Comment';
-import Issue from '@/models/Issue';
 import connectMongo from "./connectMongo";
 
 export async function authenticateUser(credentials) {
