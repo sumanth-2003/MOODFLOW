@@ -12,17 +12,17 @@ export default function Home() {
             <h1 className="text-4xl font-bold text-center my-4">Welcome to MoodFlow</h1>
             <p className="text-center mb-8 text-lg">Your mental health and wellbeing companion</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Link href="/journaling" className="block p-4 text-center border bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <Link href="/journal" className="block p-4 text-center border bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                     <Image className="rounded-t-lg mx-auto" src="https://static.vecteezy.com/system/resources/previews/002/889/592/original/cartoon-man-dreams-of-money-house-and-luxury-car-while-sleeping-illustration-free-vector.jpg" alt="Journaling" width={300} height={200} />
                     <h2 className="text-2xl font-semibold mt-2">Journaling</h2>
                     <p className="mt-1 text-gray-600">Express your dreams and thoughts</p>
                 </Link>
-                <Link href="/meditation" className="block p-4 text-center border bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <Link href="/health" className="block p-4 text-center border bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                     <Image className="rounded-t-lg mx-auto" src="https://i.pinimg.com/736x/5d/c2/5a/5dc25a28453c5e9f2caef5a224e248b2.jpg" alt="Meditation" width={300} height={200} />
                     <h2 className="text-2xl font-semibold mt-2">Health Snapshot</h2>
                     <p className="mt-1 text-gray-600">Analyse your Food, Hydration & Sleep</p>
                 </Link>
-                <Link href="/therapy" className="block p-4 text-center border bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <Link href="/consult" className="block p-4 text-center border bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                     <Image className="rounded-t-lg mx-auto" src="https://media.istockphoto.com/id/1180078592/vector/business-handshake-icon-handshake-of-business-partners-business-handshake-successful-deal.jpg?s=612x612&w=0&k=20&c=j9sl8MLcSTCTSXG2vvP7zuakvjCJ_rJJEYI3U3iVQE4=" alt="Therapy" width={300} height={200} />
                     <h2 className="text-2xl font-semibold mt-2">Healing Starts Here</h2>
                     <p className="mt-1 text-gray-600">Connect with a professional</p>
