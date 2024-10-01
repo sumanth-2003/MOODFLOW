@@ -6,37 +6,38 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 
 export default function Journaling() {
-    const [dream, setDream] = useState('');
+    const [journal, setJournal] = useState('');
     const { transcript, resetTranscript, listening } = useSpeechRecognition();
 
     const handleSubmit = async () => {
-        const response = await fetch('/api/dream', {
+        const response = await fetch('/api/journal', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ dream: dream || transcript }),
+            body: JSON.stringify({ journal: journal || transcript }),
         });
         const result = await response.json();
         console.log(result);
-        alert('Dream saved successfully!');
+        alert('Journal saved successfully!');
+        setJournal('');
     };
 
     const startListening = () => SpeechRecognition.startListening({ continuous: true });
     const stopListening = () => {
         SpeechRecognition.stopListening()
-        setDream(prev => prev + transcript)
+        setJournal(prev => prev + transcript)
         resetTranscript()
     };
 
     return (
         <div className="container mx-auto p-4" style={{ minHeight: '94vh' }}>
-            <h1 className="text-4xl font-bold text-center mb-4">Record Your Dream</h1>
+            <h1 className="text-4xl font-bold text-center mb-4">Record Your Journal</h1>
             <textarea
                 className="border p-2 w-full block w-full border-gray-200 rounded-lg text-sm"
-                value={dream + transcript}
-                onChange={(e) => setDream(e.target.value)}
-                placeholder="Type your dream here..."
+                value={journal + transcript}
+                onChange={(e) => setJournal(e.target.value)}
+                placeholder="Type your journla here..."
                 rows={5}
             />
             <div className='my-3'>
@@ -59,7 +60,7 @@ export default function Journaling() {
                     onClick={handleSubmit}
                     className="bg-blue-500 text-white p-2 rounded-lg"
                 >
-                    Save Dream
+                    Save Journal
                 </button>
             </div>
         </div>
