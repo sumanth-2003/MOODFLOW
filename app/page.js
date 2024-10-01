@@ -14,7 +14,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Link href="/journaling" className="block p-4 text-center border bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
                     <Image className="rounded-t-lg mx-auto" src="https://static.vecteezy.com/system/resources/previews/002/889/592/original/cartoon-man-dreams-of-money-house-and-luxury-car-while-sleeping-illustration-free-vector.jpg" alt="Journaling" width={300} height={200} />
-                    <h2 className="text-2xl font-semibold mt-2">Dream Analysis</h2>
+                    <h2 className="text-2xl font-semibold mt-2">Journaling</h2>
                     <p className="mt-1 text-gray-600">Express your dreams and thoughts</p>
                 </Link>
                 <Link href="/meditation" className="block p-4 text-center border bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
