@@ -61,7 +61,8 @@ export default function App() {
 		{ name: "Home", href: "/" },
 		{ name: "Journal", href: "/journal" },
 		{ name: "Health Snapshot", href: "/health" },
-		{ name: "Consult Expert", href: "/consult" },
+		{ name: "Consult Agent", href: "/consult" },
+		{ name: "Consult Professional", href: "/professional" },
 	];
 
 	return (

@@ -32,7 +32,7 @@ export const POST = async (req, res) => {
             }
             return [];
         };
-        // console.log(conversation)
+        console.log(conversation)
 
         const response = await generateContent(conversation);
 
