@@ -33,18 +33,17 @@ export default function MentalHealthAssistant() {
                     Ignore if he use hurtful language, as he might be to much stressed and not in good mood, as that's the reason why he want to talk to you.
                     Start with your first question as a councellor, which would be directly displayed to the user.
                 `;
-                setConversation(prev => [...prev, { role: 'user', parts: [{ text: prompt }] }]);
+                setConversation([{ role: 'user', parts: [{ text: prompt }] }]);
+                askQuestion({ conversation: [{ role: 'user', parts: [{ text: prompt }] }] });
             })
             .catch(error => console.error('Error:', error));
     }, []);
 
     useEffect(() => {
-        if (conversation.length > 0 && conversation[conversation.length - 1].role === 'user') {
-            askQuestion();
-        }
-    }, [conversation]);
+        console.log(conversation)
+    }, [conversation])
 
-    const askQuestion = () => {
+    const askQuestion = (conv) => {
         setSending(true);
         chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         fetch('/api/agent', {
@@ -52,7 +51,7 @@ export default function MentalHealthAssistant() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ conversation })
+            body: JSON.stringify(conv || { conversation })
         })
             .then(response => response.json())
             .then(data => {
@@ -69,8 +68,9 @@ export default function MentalHealthAssistant() {
         if (response) {
             setMsgs(prevConversation => [...prevConversation, { role: 'user', text: userResponse }]);
             setUserResponse('');
-            setConversation(prevConversation => [...prevConversation, { role: 'user', parts: [{ text: `User Said: \"${userResponse}\". Now, ask the NEXT QUESTION. REMEMBER, dont include anything else other than question, as it is shown as it is to the user.` }] }]);
+            setConversation(prevConversation => [...prevConversation, { role: 'user', parts: [{ text: userResponse }] }]);
         }
+        askQuestion();
     };
 
     const handleKeyPress = (event) => {
