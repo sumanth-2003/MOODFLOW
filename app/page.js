@@ -28,14 +28,14 @@ export default function Home() {
                     <p className="mt-1 text-gray-600">Connect with a professional</p>
                 </Link>
             </div>
-            <div className="flex items-center mt-8 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <div className="w-1/2">
-                    <img className="w-full h-auto rounded-lg" src="https://static.vecteezy.com/system/resources/previews/024/105/801/original/mood-swings-woman-emotions-change-psychology-disorder-mental-problem-stress-anxiety-and-life-crisis-bipolar-emotion-emotional-balance-modern-flat-cartoon-style-illustration-vector.jpg" alt="MoodFlow" />
+            <div className="flex flex-col lg:flex-row items-center mt-8 bg-white shadow-lg rounded-lg overflow-hidden">
+                <div className="lg:w-1/2 w-full">
+                    <img className="w-full h-auto object-cover" src="https://static.vecteezy.com/system/resources/previews/024/105/801/original/mood-swings-woman-emotions-change-psychology-disorder-mental-problem-stress-anxiety-and-life-crisis-bipolar-emotion-emotional-balance-modern-flat-cartoon-style-illustration-vector.jpg" alt="MoodFlow" />
                 </div>
-                <div className="w-1/2 px-8">
-                    <h2 className="text-3xl font-bold text-center mb-4">Why Choose MoodFlow?</h2>
-                    <p className="text-center mb-4 text-lg">MoodFlow offers a set of tools to help you manage mental health & wellbeing.</p>
-                    <ul className="list-disc list-inside space-y-2">
+                <div className="lg:w-1/2 w-full p-6 lg:pl-8 lg:py-8">
+                    <h2 className="text-3xl font-bold text-center lg:text-left mb-4 text-gray-800">Why Choose MoodFlow?</h2>
+                    <p className="text-center lg:text-left mb-6 text-lg text-gray-600">MoodFlow offers a set of tools to help you manage mental health & wellbeing.</p>
+                    <ul className="list-disc list-inside space-y-2 text-gray-700">
                         <li>Personalized journaling prompts to help you reflect on your day</li>
                         <li>Guided meditations to help you relax and unwind</li>
                         <li>Access to professional therapists for personalized support</li>
