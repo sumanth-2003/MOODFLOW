@@ -1,4 +1,3 @@
-// models/Journal.js
 import mongoose from 'mongoose';
 
 const JournalSchema = new mongoose.Schema({
@@ -10,11 +9,10 @@ const JournalSchema = new mongoose.Schema({
         type: Date,
         default: Date.now, // Store the current date if not provided
     },
-    // userId: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User', // Assuming user authentication exists
-    //     required: true,
-    // },
+    username: { // Store the username of the user who created the journal
+        type: String,
+        required: true, // Ensure that journal entries are associated with a user
+    },
 });
 
 export default mongoose.models.Journal || mongoose.model('Journal', JournalSchema);

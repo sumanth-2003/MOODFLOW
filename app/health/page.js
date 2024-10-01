@@ -10,12 +10,13 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 export default function HealthPage() {
     const [formData, setFormData] = useState({
         wakeTime: '06:00',
-        sleepTime: '10:00',
+        sleepTime: '22:00',
         foodIntake: '',
         waterIntake: '',
         additionalHealthData: ''
     });
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
+    const [healthData, setHealthData] = useState([]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -37,14 +38,15 @@ export default function HealthPage() {
             },
             body: JSON.stringify(formData)
         });
+
         if (response.ok) {
+            const newRecord = await response.json();
+            setHealthData((prevData) => [...prevData, newRecord.healthRecord]);
             alert('Data submitted successfully');
         } else {
             alert('Failed to submit data');
         }
     };
-
-    const [healthData, setHealthData] = useState([]);
 
     useEffect(() => {
         const fetchHealthData = async () => {
@@ -56,43 +58,30 @@ export default function HealthPage() {
         fetchHealthData();
     }, []);
 
-    const calculateSleepDuration = (sleepTime, wakeTime) => {
-        const sleepDate = formatTime(sleepTime);
-        const wakeDate = formatTime(wakeTime);
-        let duration = (wakeDate - sleepDate) / (1000 * 60 * 60); 
-        
-        if (duration < 0) {
-            duration += 24;
+    const calculateSleepDuration = (sleepTime, wakeTime, createdAt) => {
+        const sleep = new Date(createdAt);
+        const wake = new Date(createdAt);
+        const [sleepHour, sleepMinute] = sleepTime.split(':').map(Number);
+        const [wakeHour, wakeMinute] = wakeTime.split(':').map(Number);
+        sleep.setHours(sleepHour, sleepMinute, 0, 0);
+        wake.setHours(wakeHour, wakeMinute, 0, 0);
+        if (wake < sleep) {
+            wake.setDate(wake.getDate() + 1);
         }
+        const duration = (wake - sleep) / (1000 * 60 * 60);
         return duration;
     };
 
-    const formatTime = (time) => {
-        if (!time) return null;
-        const [hours, minutes] = time.split(':');
-        return new Date(1970, 0, 1, hours, minutes);
-    };
+    const sleepData = healthData.map((entry) => {
+        const duration = calculateSleepDuration(entry.sleepTime, entry.wakeTime, entry.createdAt);
+        return {
+            date: new Date(entry.createdAt).toLocaleDateString(),
+            sleepDuration: duration,
+            waterIntake: entry.waterIntake
+        };
+    });
 
-    const sleepData = [];
-    for (let i = 0; i < healthData.length - 1; i++) {
-        const currentRecord = healthData[i];
-        const nextRecord = healthData[i + 1];
-
-        const currentDate = new Date(currentRecord.createdAt);
-        const nextDate = new Date(nextRecord.createdAt);
-
-        if (currentDate.toDateString() === nextDate.toDateString() && currentRecord.sleepTime && nextRecord.wakeTime) {
-            const duration = calculateSleepDuration(currentRecord.sleepTime, nextRecord.wakeTime);
-            sleepData.push({
-                date: currentDate.toLocaleDateString(),
-                sleepDuration: duration
-            });
-        }
-    }
-
-    console.log(sleepData)
-
-    const data = {
+    const sleepChartData = {
         labels: sleepData.map(entry => entry.date),
         datasets: [
             {
@@ -104,27 +93,28 @@ export default function HealthPage() {
         ],
     };
 
+    const hydrationChartData = {
+        labels: sleepData.map(entry => entry.date),
+        datasets: [
+            {
+                label: 'Water Intake (liters)',
+                data: sleepData.map(entry => entry.waterIntake),
+                borderColor: '#82ca9d',
+                fill: false,
+            },
+        ],
+    };
+
     return (
-        <div className="container mx-auto p-4" style={{ minHeight: '95vh' }}>
-            <h1 className="text-3xl font-bold text-center mb-8">Health Data Input</h1>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
+        <div className="min-h-screen bg-gradient-to-b from-pink-50 via-blue-50 to-teal-50 py-8">
+            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-500 to-teal-400 bg-clip-text text-transparent text-center my-8">
+                Health Data Input
+            </h1>
+            <form onSubmit={handleSubmit} className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white p-8 rounded-lg shadow-lg">
                 <div className="flex flex-col">
                     <div className="flex items-center mb-2">
                         <FaBed className="text-2xl mr-2" />
-                        <label className="font-semibold">Wake Up Time</label>
-                    </div>
-                    <input
-                        type="time"
-                        name="wakeTime"
-                        value={formData.wakeTime}
-                        onChange={handleChange}
-                        className="input-field p-2 border rounded w-full"
-                    />
-                </div>
-                <div className="flex flex-col">
-                    <div className="flex items-center mb-2">
-                        <FaBed className="text-2xl mr-2" />
-                        <label className="font-semibold">Sleep Time</label>
+                        <label className="font-semibold text-purple-700">Yesterday's Sleep Time</label>
                     </div>
                     <input
                         type="time"
@@ -136,8 +126,21 @@ export default function HealthPage() {
                 </div>
                 <div className="flex flex-col">
                     <div className="flex items-center mb-2">
+                        <FaBed className="text-2xl mr-2" />
+                        <label className="font-semibold text-purple-700">Wake Up Time</label>
+                    </div>
+                    <input
+                        type="time"
+                        name="wakeTime"
+                        value={formData.wakeTime}
+                        onChange={handleChange}
+                        className="input-field p-2 border rounded w-full"
+                    />
+                </div>
+                <div className="flex flex-col">
+                    <div className="flex items-center mb-2">
                         <FaUtensils className="text-2xl mr-2" />
-                        <label className="font-semibold">Food Intake</label>
+                        <label className="font-semibold text-purple-700">Food Intake</label>
                     </div>
                     <input
                         type="text"
@@ -150,7 +153,7 @@ export default function HealthPage() {
                 <div className="flex flex-col">
                     <div className="flex items-center mb-2">
                         <FaWater className="text-2xl mr-2" />
-                        <label className="font-semibold">Water Intake (in liters)</label>
+                        <label className="font-semibold text-purple-700">Water Intake (liters)</label>
                     </div>
                     <input
                         type="number"
@@ -163,7 +166,7 @@ export default function HealthPage() {
                 <div className="flex flex-col">
                     <div className="flex items-center mb-2">
                         <FaHeartbeat className="text-2xl mr-2" />
-                        <label className="font-semibold">Additional Health Data</label>
+                        <label className="font-semibold text-purple-700">Additional Health Data</label>
                     </div>
                     <textarea
                         name="additionalHealthData"
@@ -173,14 +176,21 @@ export default function HealthPage() {
                     ></textarea>
                 </div>
                 <div className="flex justify-center lg:col-span-2">
-                    <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700">Submit</button>
+                    <button type="submit" className="bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-500 transition duration-300">
+                        Submit
+                    </button>
                 </div>
             </form>
+
             {sleepData.length > 0 && (
-                <div className="mt-8">
-                    <h2 className="text-2xl font-bold text-center mb-4">Sleep Data for the Past Days</h2>
-                    <div className="flex justify-center">
-                        <Line data={data} />
+                <div className="mt-8 container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="bg-white p-8 rounded-lg shadow-lg">
+                        <h2 className="text-2xl font-bold text-purple-700 text-center mb-4">Sleep Data for the Past Days</h2>
+                        <Line data={sleepChartData} />
+                    </div>
+                    <div className="bg-white p-8 rounded-lg shadow-lg">
+                        <h2 className="text-2xl font-bold text-teal-700 text-center mb-4">Hydration Intake (liters)</h2>
+                        <Line data={hydrationChartData} />
                     </div>
                 </div>
             )}
