@@ -21,7 +21,7 @@ export default function Journaling() {
         console.log(result);
         alert('Dream saved successfully!');
     };
-    
+
     const startListening = () => SpeechRecognition.startListening({ continuous: true });
     const stopListening = () => {
         SpeechRecognition.stopListening()
@@ -30,7 +30,7 @@ export default function Journaling() {
     };
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4" style={{ minHeight: '94vh' }}>
             <h1 className="text-4xl font-bold text-center mb-4">Record Your Dream</h1>
             <textarea
                 className="border p-2 w-full block w-full border-gray-200 rounded-lg text-sm"
