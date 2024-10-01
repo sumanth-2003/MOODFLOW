@@ -10,11 +10,11 @@ const JournalSchema = new mongoose.Schema({
         type: Date,
         default: Date.now, // Store the current date if not provided
     },
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Assuming user authentication exists
-        required: true,
-    },
+    // userId: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User', // Assuming user authentication exists
+    //     required: true,
+    // },
 });
 
 export default mongoose.models.Journal || mongoose.model('Journal', JournalSchema);
