@@ -25,10 +25,6 @@ export default function HealthPage() {
         });
     };
 
-    useEffect(() => {
-        console.log(formData);
-    }, [formData]);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (session) {
@@ -54,39 +50,55 @@ export default function HealthPage() {
         const fetchHealthData = async () => {
             const response = await fetch('/api/health');
             const data = await response.json();
-            console.log(data);
             setHealthData(data.healthRecords);
         };
 
         fetchHealthData();
     }, []);
 
+    const calculateSleepDuration = (sleepTime, wakeTime) => {
+        const sleepDate = formatTime(sleepTime);
+        const wakeDate = formatTime(wakeTime);
+        let duration = (wakeDate - sleepDate) / (1000 * 60 * 60); 
+        
+        if (duration < 0) {
+            duration += 24;
+        }
+        return duration;
+    };
+
     const formatTime = (time) => {
-        if (!time) return null; // Handle undefined time
+        if (!time) return null;
         const [hours, minutes] = time.split(':');
         return new Date(1970, 0, 1, hours, minutes);
     };
 
-    const sleepData = healthData.map((entry) => ({
-        date: new Date(entry.createdAt).toLocaleDateString(),
-        wakeTime: formatTime(entry.wakeTime)?.getHours() + formatTime(entry.wakeTime)?.getMinutes() / 60, // Convert to hours
-        sleepTime: formatTime(entry.sleepTime)?.getHours() + formatTime(entry.sleepTime)?.getMinutes() / 60, // Convert to hours
-    })).filter(entry => entry.wakeTime !== null && entry.sleepTime !== null); // Filter out invalid entries
+    const sleepData = [];
+    for (let i = 0; i < healthData.length - 1; i++) {
+        const currentRecord = healthData[i];
+        const nextRecord = healthData[i + 1];
 
-    // Chart data setup
+        const currentDate = new Date(currentRecord.createdAt);
+        const nextDate = new Date(nextRecord.createdAt);
+
+        if (currentDate.toDateString() === nextDate.toDateString() && currentRecord.sleepTime && nextRecord.wakeTime) {
+            const duration = calculateSleepDuration(currentRecord.sleepTime, nextRecord.wakeTime);
+            sleepData.push({
+                date: currentDate.toLocaleDateString(),
+                sleepDuration: duration
+            });
+        }
+    }
+
+    console.log(sleepData)
+
     const data = {
         labels: sleepData.map(entry => entry.date),
         datasets: [
             {
-                label: 'Wake Up Time',
-                data: sleepData.map(entry => entry.wakeTime),
+                label: 'Sleep Duration (hours)',
+                data: sleepData.map(entry => entry.sleepDuration),
                 borderColor: '#8884d8',
-                fill: false,
-            },
-            {
-                label: 'Sleep Time',
-                data: sleepData.map(entry => entry.sleepTime),
-                borderColor: '#82ca9d',
                 fill: false,
             },
         ],
@@ -166,7 +178,7 @@ export default function HealthPage() {
             </form>
             {sleepData.length > 0 && (
                 <div className="mt-8">
-                    <h2 className="text-2xl font-bold text-center mb-4">Sleep Data for the Past 7 Days</h2>
+                    <h2 className="text-2xl font-bold text-center mb-4">Sleep Data for the Past Days</h2>
                     <div className="flex justify-center">
                         <Line data={data} />
                     </div>
