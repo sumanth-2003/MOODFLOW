@@ -91,7 +91,7 @@ export default function Journaling() {
 
             {/* Journal input area */}
             <textarea
-                className="border border-gray-300 p-2 w-3/4 max-w-md block rounded-lg text-sm mb-4 relative z-10 bg-gradient-to-b from-pink-50 via-blue-50 to-teal-50"
+                className="border border-gray-300 p-2 w-3/4 max-w-md block rounded-lg text-sm mb-4 relative z-10 bg-white bg-opacity-70 backdrop-blur-lg"
                 value={journal + transcript} // Update journal text with transcript if any
                 onChange={(e) => setJournal(e.target.value)} // Allow manual typing
                 placeholder="Type here to discover your true self..."
@@ -112,16 +112,16 @@ export default function Journaling() {
                 {listening ? (
                     <button
                         onClick={stopListening}
-                        className="px-6 py-3 rounded-lg bg-red-500 text-white me-3 text-lg border border-red-300"
+                        className="px-6 py-3 rounded-lg bg-green-500 text-white me-3 text-lg border border-red-300"
                     >
-                        <FontAwesomeIcon icon={faMicrophoneSlash} />
+                        <FontAwesomeIcon icon={faMicrophone} />
                     </button>
                 ) : (
                     <button
                         onClick={startListening}
-                        className="px-6 py-3 rounded-lg bg-green-500 text-white me-3 text-lg border border-green-300"
+                        className="px-6 py-3 rounded-lg bg-red-500 text-white me-3 text-lg border border-green-300"
                     >
-                        <FontAwesomeIcon icon={faMicrophone} />
+                        <FontAwesomeIcon icon={faMicrophoneSlash} />
                     </button>
                 )}
                 <button
@@ -133,25 +133,34 @@ export default function Journaling() {
             </div>
 
             {/* Display last 7 days journals */}
-            <div className="w-3/4 max-w-md mt-8 relative z-10">
-                <h2 className="text-3xl font-bold mb-4">Your last 7 days of journals:</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="w-full max-w-7xl mt-8 mx-auto px-4 relative z-10">
+                <h2 className="text-3xl font-bold mb-6 text-center">Your last 7 days of journals:</h2>
+
+                {/* Grid layout for journals */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {journals.map(j => (
                         <div
                             key={j._id}
-                            className="bg-white shadow-lg rounded-lg p-4 cursor-pointer hover:shadow-xl transition-shadow duration-300"
+                            className="bg-white bg-opacity-70 backdrop-blur-lg shadow-lg rounded-lg p-6 cursor-pointer hover:shadow-2xl transition-shadow duration-300"
                             onClick={() => setSelectedJournal(j)} // Set selected journal for viewing
                         >
-                            <h3 className="text-xl font-bold mb-2">
+                            {/* Journal date */}
+                            <h3 className="text-xl font-bold mb-3 text-blue-600">
                                 {new Date(j.date).toLocaleDateString()}
                             </h3>
-                            <p className="text-gray-600 truncate">
-                                {j.journal.substring(0, 50)}...
+
+                            {/* Journal content preview */}
+                            <p className="text-gray-700 line-clamp-3">
+                                {j.journal.length > 100
+                                    ? `${j.journal.substring(0, 100)}... `
+                                    : j.journal
+                                }
                             </p>
                         </div>
                     ))}
                 </div>
             </div>
+
 
             {/* Modal for displaying selected journal */}
             {selectedJournal && (
