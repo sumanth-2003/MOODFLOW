@@ -5,13 +5,13 @@ const JournalSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    username: {
+        type: String,
+        required: true,
+    },
     date: {
         type: Date,
         default: Date.now, // Store the current date if not provided
-    },
-    username: { // Store the username of the user who created the journal
-        type: String,
-        required: true, // Ensure that journal entries are associated with a user
     },
 });
 

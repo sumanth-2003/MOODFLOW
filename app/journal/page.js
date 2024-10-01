@@ -18,7 +18,7 @@ export default function Journaling() {
         const fetchJournals = async () => {
             if (!session) return; // Only fetch journals if the user is logged in
 
-            const response = await fetch('/api/journal'); // Fetches journals
+            const response = await fetch('/api/journal?username=' + session.user.username); // Fetches journals
             const data = await response.json();
             setJournals(data.journals || []); // Set journals or empty array if undefined
         };
@@ -33,24 +33,43 @@ export default function Journaling() {
             return;
         }
 
-        const response = await fetch('/api/journal', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ journal }), // Submit journal entry only
-        });
-        const result = await response.json();
-        alert('Journal saved successfully!');
+        // Extract the username from the session
+        const username = session.user.username || session.user.email;
 
-        // Refetch journals after submitting
-        const fetchJournals = async () => {
-            const response = await fetch('/api/journal');
-            const data = await response.json();
-            setJournals(data.journals || []);
-        };
-        fetchJournals();
+        console.log('Submitting journal:', journal);
+        console.log('Submitting username:', username);
+
+        try {
+            const response = await fetch('/api/journal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ journal, username }), // Send both journal and username
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert('Journal saved successfully!');
+            } else {
+                console.error('Failed to save journal:', result.error);
+                alert('Failed to save journal');
+            }
+
+            // Refetch journals after submitting
+            setJournal('');
+            const fetchJournals = async () => {
+                const response = await fetch('/api/journal');
+                const data = await response.json();
+                setJournals(data.journals || []);
+            };
+            fetchJournals();
+        } catch (error) {
+            console.error('Error submitting journal:', error);
+            alert('An error occurred while saving the journal');
+        }
     };
+
 
     // Start listening for speech
     const startListening = () => SpeechRecognition.startListening({ continuous: true });
