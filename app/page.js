@@ -1,3 +1,5 @@
+import { faArrowRight, faRightLong } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaArrowRight } from 'react-icons/fa';
@@ -12,13 +14,13 @@ export default function Home() {
         <div className="min-h-screen bg-gradient-to-b from-pink-50 via-blue-50 to-teal-50 py-8">
             <div className="text-center mb-16">
                 <h1 className="text-7xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-500 to-teal-400 bg-clip-text text-transparent my-4 drop-shadow-lg">
-                    Welcome to MoodFlow
+                    Welcome to MindFlow
                 </h1>
                 <p className="text-2xl text-gray-800 mb-4 font-medium">
-                    Your mental health and wellbeing companion
+                Transform Your Mental Wellness Journey
                 </p>
                 <p className="text-xl text-purple-800">
-                    Discover tools to support your mental health journey.
+                Track your thoughts, analyze your health, and connect with expert psychiatrists for personalized support.
                 </p>
             </div>
 
