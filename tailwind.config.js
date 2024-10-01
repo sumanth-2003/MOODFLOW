@@ -1,4 +1,4 @@
-const {nextui} = require("@nextui-org/react");
+import {nextui} from '@nextui-org/react'
 
 /** @type {import('tailwindcss').Config} */
 
@@ -18,5 +18,5 @@ module.exports = {
     },
   },
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [nextui(), require('@tailwindcss/typography')],
 };

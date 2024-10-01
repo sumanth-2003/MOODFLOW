@@ -1,6 +1,5 @@
 import connectMongo from "@/utils/connectMongo";
 import User from "@/models/User";
-import getUserAcl from '@/utils/getUserAcl';
 import NextAuth from "next-auth/next"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { authenticateUser } from "@/utils/authenticateUser";
@@ -43,7 +42,6 @@ const authOptions = {
                 token.displayName = user.displayName
                 token.role = user.role
                 token.picture = user.picture
-                token.acl = await getUserAcl(token.role)
             }
             return token
         },
@@ -55,7 +53,6 @@ const authOptions = {
             session.user.displayName = token.displayName
             session.user.role = token.role
             session.user.picture = token.picture
-            session.user.acl = token.acl
             // console.log("session", session)
             return session
         }
