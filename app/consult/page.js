@@ -1,5 +1,6 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useState, useEffect, useRef } from 'react';
 
 export default function MentalHealthAssistant() {
@@ -9,6 +10,8 @@ export default function MentalHealthAssistant() {
     const [sending, setSending] = useState(false);
     const chatContainerRef = useRef(null);
     const [healthData, setHealthData] = useState([]);
+    const [journalData, setJournalData] = useState([])
+    const { data: session } = useSession();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -17,6 +20,10 @@ export default function MentalHealthAssistant() {
                 const healthResult = await healthResponse.json();
                 console.log('Health Data:', healthResult);
                 setHealthData(healthResult.healthRecords || []);
+                const journalResponse = await fetch('/api/journal?username=' + session);
+                const journalResult = await journalResponse.json();
+                console.log('Health Data:', journalResult);
+                setJournalData(journalResult.journals || []);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -32,6 +39,8 @@ export default function MentalHealthAssistant() {
                 Here is the data:
 
                 Health Data: ${JSON.stringify(healthData)}
+
+                His diary journal for last few days: "${JSON.stringify(journalData)}"
 
                 Your task is to provide a detailed analysis of the user's health data. You need to analyze their sleep patterns, hydration intake, 
                 and food consumption in detail.
