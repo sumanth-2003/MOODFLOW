@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 
 export default function MentalHealthAssistant() {
     const [conversation, setConversation] = useState([]);
-    const [msgs, setMsgs] = useState([])
+    const [msgs, setMsgs] = useState([]);
     const [userResponse, setUserResponse] = useState('');
     const [sending, setSending] = useState(false);
     const chatContainerRef = useRef(null);
@@ -15,7 +15,7 @@ export default function MentalHealthAssistant() {
             try {
                 const healthResponse = await fetch('/api/health');
                 const healthResult = await healthResponse.json();
-                console.log("Health Data:", healthResult);
+                console.log('Health Data:', healthResult);
                 setHealthData(healthResult.healthRecords || []);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -52,8 +52,8 @@ export default function MentalHealthAssistant() {
                 Address them in 1st person. Keep the response very consise and short, with out headings and bullets, and irrelevant info.
                 Put the result in 5-6 sentences only.
             `;
-            setConversation(prev => {
-                if (prev.find(convo => convo.parts[0].text === prompt)) {
+            setConversation((prev) => {
+                if (prev.find((convo) => convo.parts[0].text === prompt)) {
                     return prev;
                 }
                 return [...prev, { role: 'user', parts: [{ text: prompt }] }];
@@ -77,22 +77,22 @@ export default function MentalHealthAssistant() {
             },
             body: JSON.stringify({ conversation })
         })
-            .then(response => response.json())
-            .then(data => {
-                setConversation(prevConversation => [...prevConversation, ...data]);
-                setMsgs(prev => [...prev, { role: data[0]?.role, text: data[0]?.parts[0]?.text }]);
+            .then((response) => response.json())
+            .then((data) => {
+                setConversation((prevConversation) => [...prevConversation, ...data]);
+                setMsgs((prev) => [...prev, { role: data[0]?.role, text: data[0]?.parts[0]?.text }]);
                 chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
                 setSending(false);
             })
-            .catch(error => console.error('Error:', error));
+            .catch((error) => console.error('Error:', error));
     };
 
     const handleUserResponse = (stop) => {
         const response = userResponse.trim();
         if (response) {
-            setMsgs(prevConversation => [...prevConversation, { role: 'user', text: userResponse }]);
+            setMsgs((prevConversation) => [...prevConversation, { role: 'user', text: userResponse }]);
             setUserResponse('');
-            setConversation(prevConversation => [...prevConversation, { role: 'user', parts: [{ text: userResponse }] }]);
+            setConversation((prevConversation) => [...prevConversation, { role: 'user', parts: [{ text: userResponse }] }]);
         }
     };
 
@@ -105,12 +105,23 @@ export default function MentalHealthAssistant() {
 
     return (
         <div className="flex flex-col items-center pb-4">
-            <div className="flex flex-col bg-white rounded-lg p-4 overflow-y-auto mb-4 w-full max-w-lg h-[83vh]" ref={chatContainerRef}>
+            <div 
+                className="flex flex-col rounded-lg p-4 overflow-y-auto mb-4 w-full max-w-lg h-[83vh]"
+                ref={chatContainerRef}
+                style={{
+                    backgroundImage: 'url(https://www.wallpaperuse.com/wallp/100-1005520_m.png)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    opacity: '0.8',
+                }}
+            >
                 {msgs.map((message, index) => (
                     <div
                         key={index}
-                        className={`p-2 rounded-lg mb-2 max-w-xs ${message.role === 'user' ? 'bg-blue-500 text-white self-end rounded-br-none' : 'bg-gray-300 text-black self-start rounded-bl-none'
-                            }`}
+                        className={`p-2 rounded-lg mb-2 max-w-xs ${
+                            message.role === 'user' ? 'bg-blue-500 text-white self-end rounded-br-none' : 'bg-gray-100 text-black self-start rounded-bl-none'
+                        }`}
                         style={{
                             alignSelf: message.role === 'user' ? 'flex-end' : 'flex-start',
                             borderRadius: message.role === 'user' ? '15px 15px 0 15px' : '15px 15px 15px 0',
@@ -119,7 +130,7 @@ export default function MentalHealthAssistant() {
                         {message.text}
                     </div>
                 ))}
-                {sending && <div className="p-2 bg-gray-300 text-black rounded-lg">Consultant is typing...</div>}
+                {sending && <div className="p-2 bg-gray-100 text-black rounded-lg">Agent is typing...</div>}
             </div>
             <div className="flex w-full max-w-lg">
                 <input
@@ -127,7 +138,7 @@ export default function MentalHealthAssistant() {
                     value={userResponse}
                     onChange={(e) => setUserResponse(e.target.value)}
                     onKeyDown={handleKeyPress}
-                    className="flex-1 p-2 border rounded-l-lg"
+                    className="flex-1 p-2 border border-gray-200 rounded-l-lg"
                     placeholder="Your response"
                 />
                 <button onClick={() => handleUserResponse(false)} className="p-2 bg-blue-500 text-white rounded-r-lg" disabled={sending}>
