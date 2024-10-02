@@ -19,7 +19,7 @@ function NavbarItemCustom({ exact, href, children, sep = false, ...props }) {
             <Link href={href} {...props} className={(isActive ? 'text-black text-bold' : 'text-zinc-400 hover:text-black')}>
                 {children}
             </Link>
-            {sep &&  <span className="text-zinc-600 ms-4">/</span>}
+            {sep &&  <span className="text-zinc-400 ms-4">/</span>}
         </NavbarItem>
     );
 }
