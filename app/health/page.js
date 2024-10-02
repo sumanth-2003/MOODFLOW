@@ -114,7 +114,7 @@ export default function HealthPage() {
                 <div className="flex flex-col">
                     <div className="flex items-center mb-2">
                         <FaBed className="text-2xl mr-2" />
-                        <label className="font-semibold text-purple-700">Yesterday's Sleep Time</label>
+                        <label className="font-semibold text-purple-700">Yesterday&apos;s Sleep Time</label>
                     </div>
                     <input
                         type="time"
