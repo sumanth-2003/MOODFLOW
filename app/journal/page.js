@@ -104,16 +104,16 @@ export default function Journaling() {
                 {listening ? (
                     <button
                         onClick={stopListening}
-                        className="px-6 py-3 rounded-lg bg-red-500 text-white me-3 text-lg border border-red-300"
+                        className="px-6 py-3 rounded-lg bg-green-500 text-white me-3 text-lg border border-red-300"
                     >
-                        <FontAwesomeIcon icon={faMicrophoneSlash} />
+                        <FontAwesomeIcon icon={faMicrophone} />
                     </button>
                 ) : (
                     <button
                         onClick={startListening}
-                        className="px-6 py-3 rounded-lg bg-green-500 text-white me-3 text-lg border border-green-300"
+                        className="px-6 py-3 rounded-lg bg-red-500 text-white me-3 text-lg border border-green-300"
                     >
-                        <FontAwesomeIcon icon={faMicrophone} />
+                        <FontAwesomeIcon icon={faMicrophoneSlash} />
                     </button>
                 )}
                 <button
