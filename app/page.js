@@ -86,10 +86,8 @@ export default function Home() {
                     </p>
                     <ul className="list-disc list-inside space-y-2 text-gray-700">
                         <li>Personalized journaling prompts to help you reflect on your day</li>
-                        <li>Guided meditations to help you relax and unwind</li>
                         <li>Access to professional therapists for personalized support</li>
-                        <li>Track your mood and identify patterns over time</li>
-                        <li>Join a supportive community of like-minded individuals</li>
+                        <li>Routines Analysis and Health based Wmotional Wellbeing</li>
                     </ul>
                 </div>
             </div>
