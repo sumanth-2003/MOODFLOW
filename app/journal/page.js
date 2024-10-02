@@ -8,8 +8,8 @@ import { faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-ico
 
 export default function Journaling() {
     const [journal, setJournal] = useState('');
-    const [journals, setJournals] = useState([]); 
-    const [selectedJournal, setSelectedJournal] = useState(null); 
+    const [journals, setJournals] = useState([]);
+    const [selectedJournal, setSelectedJournal] = useState(null);
     const { transcript, resetTranscript, listening } = useSpeechRecognition();
     const { data: session } = useSession();
 
@@ -23,7 +23,7 @@ export default function Journaling() {
         };
 
         fetchJournals();
-    }, [session]); 
+    }, [session]);
 
     const handleSubmit = async () => {
         if (!session) {
@@ -124,25 +124,28 @@ export default function Journaling() {
                 </button>
             </div>
 
-            <div className="w-3/4 max-w-md mt-8 relative z-10">
-                <h2 className="text-3xl font-bold mb-4">Your last 7 days of journals:</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="w-full max-w-7xl mt-8 mx-auto px-4 relative z-10">
+                <h2 className="text-3xl font-bold mb-6 text-center">Your last 7 days of journals:</h2>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {journals.map(j => (
                         <div
                             key={j._id}
-                            className="bg-white shadow-lg rounded-lg p-4 cursor-pointer hover:shadow-xl transition-shadow duration-300"
+                            className="bg-white bg-opacity-70 backdrop-blur-lg shadow-lg rounded-lg p-6 cursor-pointer hover:shadow-2xl transition-shadow duration-300"
                             onClick={() => setSelectedJournal(j)}
                         >
-                            <h3 className="text-xl font-bold mb-2">
+                            <h3 className="text-xl font-bold mb-3 text-blue-600">
                                 {new Date(j.date).toLocaleDateString()}
                             </h3>
-                            <p className="text-gray-600 truncate">
-                                {j.journal.substring(0, 50)}...
+
+                            <p className="text-gray-700 line-clamp-3">
+                                {j.journal.length > 100 ? j.journal.substring(0, 100) : j.journal}
                             </p>
                         </div>
                     ))}
                 </div>
             </div>
+
 
             {selectedJournal && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
